@@ -10,9 +10,15 @@ const db = require('./db/seq');
 const app = express();
 
 // test database
+/**
+ * postgres database
 db.authenticate()
   .then(() => { console.log('Database connected...'); })
   .catch(() => { console.log('Database error: ' + (err)) });
+*/
+
+// mongodb connection
+require('./db/mongodb')();
 
 // middleware
 app.use(cors());

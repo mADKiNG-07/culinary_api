@@ -6,26 +6,31 @@ const { where } = require('sequelize');
 // create a recipe
 router.post('/', (req, res) => {
   const { name, title, ingredients, description, image_url, username } = req.body;
-  Recipe.create({
-    name,
-    title,
-    ingredients,
-    description,
-    image_url,
-    username
-  })
-    .then(recipe => {
-      res.json({
-        message: 'Recipe created successfully',
-        recipe: recipe
+
+  const recipe = new Recipe({
+    name: name,
+    ingredients: ingredients,
+    description: description,
+    image_url: image_url,
+    username: username,
+  });
+
+  recipe.save()
+    .then((result) => {
+      res.status(201).send({
+        message: "Recipe added successfully",
+        recipe: result.name,
       });
     })
-    .catch(err => { console.error(err); });
+    .catch((err) => {
+      res.status(500).send({ message: err.message });
+    });
+
 });
 
 //get all recipes
 router.get("/", (req, res) => {
-  Recipe.findAll()
+  Recipe.find()
     .then((recipes) => {
       // console.log(recipes);
       res.json(recipes);
@@ -35,8 +40,8 @@ router.get("/", (req, res) => {
 
 //get a recipe
 router.get("/:id", (req, res) => {
-  const id = req.params.id;
-  Recipe.findOne({ where: { id: id } })
+  const id = req.params._id;
+  Recipe.findOne({ id: id })
     .then((recipe) => {
       if (!recipe) return res.status(404)
         .send({
@@ -52,39 +57,23 @@ router.get("/:id", (req, res) => {
 //update a recipe
 router.put("/:id", async (req, res) => {
   const id = req.params.id;
-  const { name, title, ingredients, description, image_url, username } = req.body;
 
-  const recipe = await Recipe.findOne({ where: { id: id } });
-  if (!recipe) return res.status(404).send('Recipe not found...');
-
-  Recipe.update(
-    {
-      name: name,
-      title: title,
-      ingredients: ingredients,
-      description: description,
-      image_url: image_url,
-      username: username
-    }, {
-    where: {
-      id: id
-    }
-  }).then(() => res.json('Recipe updated...'))
-    .catch(err => res.json(err))
+  Recipe.findByIdAndUpdate(
+    id,
+    { ...req.body, updatedAt: Date.now() },
+    { useFindAndmodify: false }
+  ).then((result) => res.json({
+    message: 'Update Successfully',
+  }))
+    .catch(err => res.json({ message: err.message }))
 });
 
 //delete a recipe
 router.delete("/:id", async (req, res) => {
   const id = req.params.id;
-
-  const recipe = await Recipe.findOne({ where: { id: id } });
-  if (!recipe) return res.status(404).send('Recipe not found...');
-
-  Recipe.destroy({
-    where: {
-      id: id,
-    }
-  }).then(() => res.json('Recipe deleted...'))
+  Recipe.findByIdAndDelete(
+    id, { useFindAndmodify: false })
+    .then(() => res.json('Recipe deleted...'))
     .catch(err => res.json(err))
 });
 

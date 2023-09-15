@@ -1,17 +1,26 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../db/seq');
+// const { DataTypes } = require('sequelize');
+// const sequelize = require('../db/seq');
 
-const User = sequelize.define('users', {
+const mongoose = require('mongoose');
+
+// const User = sequelize.define('users', {
+
+// });
+
+const userschema = new mongoose.Schema({
   username: {
-    type: DataTypes.STRING,
+    type: String,
+    required: true
   },
   email: {
-    type: DataTypes.STRING,
+    type: String,
+    required: true
   },
   user_password: {
-    type: DataTypes.STRING,
+    type: String,
+    required: true
   },
-});
+})
 
-
+const User = mongoose.model('User', userschema);
 module.exports = User;

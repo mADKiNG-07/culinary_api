@@ -1,25 +1,33 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../db/seq');
+// const { DataTypes } = require('sequelize');
+// const sequelize = require('../db/seq');
+const mongoose = require('mongoose');
 
-const Recipe = sequelize.define('recipe', {
+
+// const Recipe = sequelize.define('recipe', {
+
+// });
+
+const recipeSchema = new mongoose.Schema({
   name: {
-    type: DataTypes.STRING,
-  },
-  title: {
-    type: DataTypes.STRING,
+    type: String,
+    required: true,
   },
   ingredients: {
-    type: DataTypes.STRING,
+    type: String,
+    required: true,
   },
   description: {
-    type: DataTypes.STRING,
+    type: String,
+    required: true,
   },
   image_url: {
-    type: DataTypes.STRING,
+    type: String,
   },
   username: {
-    type: DataTypes.STRING,
+    type: String,
+    required: true,
   },
-});
+})
 
+const Recipe = mongoose.model('Recipe', recipeSchema);
 module.exports = Recipe;
